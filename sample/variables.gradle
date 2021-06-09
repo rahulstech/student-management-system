@@ -1,0 +1,14 @@
+/**
+ * this is a sample variables.gradle file.
+ * all project specific values will be added here.
+ * copy this file to the project root folder and
+ * set appropriate values to all the below fields
+ */
+ext {
+    group = '<< project group name >>'
+    version = '<< project version >>'
+    javafx = {
+        mainClassName = '<< javafx main class name >>'
+        applicationName = '<< javafx application name >>'
+    }
+}
