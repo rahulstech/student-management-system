@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import static rahulstech.javafx.studentmanagementsystem.util.Helpers.isContentEqual;
 
-public class Admission implements EqualsContent {
+public class Admission implements Cloneable,EqualsContent {
 
     private String admissionId;
     private Student student;

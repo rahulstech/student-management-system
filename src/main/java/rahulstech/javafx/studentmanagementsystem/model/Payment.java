@@ -1,9 +1,11 @@
 package rahulstech.javafx.studentmanagementsystem.model;
 
+import rahulstech.javafx.studentmanagementsystem.util.EqualsContent;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Payment {
+public class Payment implements Cloneable, EqualsContent {
 
     private String paymentId;
     private Admission admission;
@@ -82,8 +84,10 @@ public class Payment {
         return Objects.equals(paymentId, payment.paymentId);
     }
 
-    public boolean equalsContent(Payment payment) {
-        if (null == payment) return false;
+    public boolean equalsContent(Object o) {
+        if (null == o) return false;
+        if (!(o instanceof Payment)) return false;
+        Payment payment = (Payment) o;
         return Objects.equals(paymentId, payment.paymentId) &&
                 Objects.equals(admission, payment.admission) &&
                 Objects.equals(student, payment.student) &&

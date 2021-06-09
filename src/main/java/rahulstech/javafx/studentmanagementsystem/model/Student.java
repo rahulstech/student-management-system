@@ -5,7 +5,7 @@ import rahulstech.javafx.studentmanagementsystem.util.EqualsContent;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Student implements EqualsContent {
+public class Student implements Cloneable, EqualsContent {
 
     private String studentId;
     private String givenName;

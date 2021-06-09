@@ -1,8 +1,10 @@
 package rahulstech.javafx.studentmanagementsystem.model;
 
+import rahulstech.javafx.studentmanagementsystem.util.EqualsContent;
+
 import java.util.Objects;
 
-public class User implements Cloneable {
+public class User implements Cloneable, EqualsContent {
 
     private String userId;
     private String username;
@@ -101,8 +103,10 @@ public class User implements Cloneable {
         return Objects.equals(userId, user.userId);
     }
 
-    public boolean equalsContent(User user) {
-        if (null == user) return false;
+    public boolean equalsContent(Object o) {
+        if (null == o) return false;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
         return Objects.equals(userId, user.userId) &&
                 Objects.equals(username, user.username) &&
                 Objects.equals(password, user.password) &&
@@ -113,7 +117,6 @@ public class User implements Cloneable {
                 Objects.equals(phone, user.phone);
     }
 
-    @Override
     public User clone() {
         User copy = new User();
         copy.userId = this.userId;

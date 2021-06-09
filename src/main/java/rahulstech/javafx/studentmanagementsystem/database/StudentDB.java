@@ -184,7 +184,7 @@ public class StudentDB {
         return courseDao;
     }
 
-    public ScheduleDao getBatchScheduleDao() {
+    public ScheduleDao getScheduleDao() {
         if (null == scheduleDao) {
             this.scheduleDao = new ScheduleDao(this);
         }

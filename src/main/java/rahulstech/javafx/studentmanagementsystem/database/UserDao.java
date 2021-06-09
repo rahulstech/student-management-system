@@ -31,14 +31,14 @@ public class UserDao {
         logger.debug("sql: "+sql+" | values: ["+copy+"]");
         Connection conn = db.getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1,user.getUserId());
-            ps.setString(2,user.getUsername());
-            ps.setString(3,user.getPassword());
-            ps.setString(4,user.getGivenName());
-            ps.setString(5,user.getFamilyName());
-            ps.setString(6,user.getSex().getValue());
-            ps.setString(7,user.getPhotoURL());
-            ps.setString(8,user.getPhone());
+            ps.setString(1,copy.getUserId());
+            ps.setString(2,copy.getUsername());
+            ps.setString(3,copy.getPassword());
+            ps.setString(4,copy.getGivenName());
+            ps.setString(5,copy.getFamilyName());
+            ps.setString(6,copy.getSex().getValue());
+            ps.setString(7,copy.getPhotoURL());
+            ps.setString(8,copy.getPhone());
             ps.execute();
             return copy;
         }
@@ -57,14 +57,9 @@ public class UserDao {
             ResultSet rs = ps.executeQuery();
             if (null != rs && rs.next()) {
                 User user = newUser(rs);
-                // TODO: check hashed password
                 return user;
             }
-            throw new DatabaseException("no user found");
-        }
-        catch (DatabaseException e) {
-            logger.error("login",e);
-            throw e;
+            return null;
         }
         catch (Exception e) {
             logger.error("login",e);
@@ -82,6 +77,7 @@ public class UserDao {
                     User user = newUser(rs);
                     users.add(user);
                 }
+                return users;
             }
             return Collections.emptyList();
         }
@@ -104,7 +100,7 @@ public class UserDao {
         user.setFamilyName(rs.getString("family_name"));
         user.setSex(Sex.from(rs.getString("sex")));
         user.setPhotoURL(rs.getString("photo_url"));
-        user.setPhone(rs.getString("photo"));
+        user.setPhone(rs.getString("phone"));
         return user;
     }
 }

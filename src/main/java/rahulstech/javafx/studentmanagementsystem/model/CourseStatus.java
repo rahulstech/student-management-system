@@ -20,8 +20,8 @@ public enum CourseStatus {
             case "OPEN": return ADMISSION_OPEN;
             case "CLOSE": return ADMISSION_CLOSE;
             case "RUNNING": return CLASSES_RUNNING;
-            case "COURSE_CANCEL": return COURSE_CANCEL;
-            case "COURSE_COMPLETE": return COURSE_COMPLETE;
+            case "CANCEL": return COURSE_CANCEL;
+            case "COMPLETE": return COURSE_COMPLETE;
         }
         throw new IllegalArgumentException(value+" is not a valid course status");
     }

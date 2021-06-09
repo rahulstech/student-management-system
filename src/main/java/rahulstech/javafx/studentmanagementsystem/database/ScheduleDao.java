@@ -13,9 +13,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static rahulstech.javafx.studentmanagementsystem.model.CourseStatus.COURSE_CANCEL;
+
 public class ScheduleDao {
 
-    private static final Logger logger = LogManager.getLogger(Schedule.class);
+    private static final Logger logger = LogManager.getLogger(ScheduleDao.class);
 
     private StudentDB db;
 
@@ -58,7 +60,8 @@ public class ScheduleDao {
     }
 
     public boolean checkOverlappingSchedule(LocalDateTime start, LocalDateTime end) {
-        String sql = "SELECT COUNT(schedule_id) FROM schedules WHERE (start BETWEEN ? AND ?) OR (end BETWEEN ? AND ?);";
+        String sql = "SELECT COUNT(schedule_id) FROM schedules INNER JOIN courses ON schedules.course_id = courses.course_id " +
+                "WHERE courses.status != \""+COURSE_CANCEL.getValue()+"\" AND ((start BETWEEN ? AND ?) OR (end BETWEEN ? AND ?) OR (start <= ? AND ? <= end));";
         logger.debug("sql: "+sql+" | values: [start="+start+", end="+end+"]");
         Connection conn = db.getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -66,6 +69,8 @@ public class ScheduleDao {
             ps.setTimestamp(2,Timestamp.valueOf(end));
             ps.setTimestamp(3,Timestamp.valueOf(start));
             ps.setTimestamp(4,Timestamp.valueOf(end));
+            ps.setTimestamp(5,Timestamp.valueOf(start));
+            ps.setTimestamp(6,Timestamp.valueOf(end));
             ResultSet rs = ps.executeQuery();
             if (null != rs && rs.next()) {
                 long count = rs.getLong(1);
@@ -104,8 +109,10 @@ public class ScheduleDao {
     }
 
     public List<Schedule> getAllSchedulesForDate(LocalDate date) {
-        String sql = "SELECT * FROM schedules WHERE DATE(start) = ?;";
-        logger.debug("sql: "+sql+" values: [date="+date+"]");
+        // TODO: existing schedules not fetched:getAllSchedulesForDate
+        String sql = "SELECT schedules.* FROM schedules INNER JOIN courses ON schedules.course_id = courses.course_id" +
+                " WHERE courses.status != \""+COURSE_CANCEL.getValue()+"\" DATE(start) = ?;";
+        logger.debug("sql: "+sql+" | values: [date="+date+"]");
         Connection conn = db.getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setDate(1,Date.valueOf(date));
@@ -129,12 +136,15 @@ public class ScheduleDao {
     }
 
     public List<Schedule> getStudentSchedulesForDate(String studentId, LocalDate date) {
+        // TODO: existing schedules not fetched:getStudentSchedulesForDate
         String sql = "SELECT schedules.* FROM schedules INNER JOIN admissions ON schedules.course_id = admissions.course_id " +
-                "WHERE admissions.student_id = ? AND DATE(schedules.start) = ?;";
-        logger.debug("sql: "+sql+" values: [studentId=\""+studentId+"\", date="+date+"]");
+                "INNER JOIN courses ON schedules.course_id = courses.course_id " +
+                "WHERE courses.status != \""+COURSE_CANCEL.getValue()+"\" AND admissions.student_id = ? AND DATE(schedules.start) = ?;";
+        logger.debug("sql: "+sql+" | values: [studentId=\""+studentId+"\", date="+date+"]");
         Connection conn = db.getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setDate(1,Date.valueOf(date));
+            ps.setString(1,studentId);
+            ps.setDate(2,Date.valueOf(date));
             ResultSet rs = ps.getResultSet();
             if (null != rs) {
                 List<Schedule> schedules = new ArrayList<>();
