@@ -83,8 +83,7 @@ public class ScheduleDao {
         String sql = "SELECT * FROM schedules WHERE course_id = ?;";
         logger.debug("sql: "+sql+" | values: [courseId=\""+courseId+"\"]");
         Connection conn = db.getConnection();
-        Course course = new Course();
-        course.setCourseId(courseId);
+        Course course = db.getCourseDao().getCourseById(courseId,new String[]{"course_id","name","status"});
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1,courseId);
             ResultSet rs = ps.executeQuery();
@@ -130,9 +129,31 @@ public class ScheduleDao {
     }
 
     public List<Schedule> getStudentSchedulesForDate(String studentId, LocalDate date) {
-        // TODO: implement getStudentSchedulesForDate
-        return null;
+        String sql = "SELECT schedules.* FROM schedules INNER JOIN admissions ON schedules.course_id = admissions.course_id " +
+                "WHERE admissions.student_id = ? AND DATE(schedules.start) = ?;";
+        logger.debug("sql: "+sql+" values: [studentId=\""+studentId+"\", date="+date+"]");
+        Connection conn = db.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDate(1,Date.valueOf(date));
+            ResultSet rs = ps.getResultSet();
+            if (null != rs) {
+                List<Schedule> schedules = new ArrayList<>();
+                while (rs.next()) {
+                    String courseId = rs.getString("course_id");
+                    Course course = db.getCourseDao().getCourseById(courseId,new String[]{"course_id","name","status"});
+                    Schedule schedule = newSchedule(rs,course);
+                    schedules.add(schedule);
+                }
+                return schedules;
+            }
+            return Collections.emptyList();
+        }
+        catch (Exception e) {
+            logger.error("getAllScheduleForDate",e);
+            throw new DatabaseException(e);
+        }
     }
+
     /**
      * Delete a schedule.
      * Only future schedules can be deleted.

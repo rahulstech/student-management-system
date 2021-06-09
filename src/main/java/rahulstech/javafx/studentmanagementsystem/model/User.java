@@ -101,9 +101,16 @@ public class User implements Cloneable {
         return Objects.equals(userId, user.userId);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(userId);
+    public boolean equalsContent(User user) {
+        if (null == user) return false;
+        return Objects.equals(userId, user.userId) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(givenName, user.givenName) &&
+                Objects.equals(familyName, user.familyName) &&
+                sex == user.sex &&
+                Objects.equals(photoURL, user.photoURL) &&
+                Objects.equals(phone, user.phone);
     }
 
     @Override

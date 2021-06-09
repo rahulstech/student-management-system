@@ -12,14 +12,14 @@ insert into sequences (table_name,pattern,create_count) VALUES ("students","STUD
 insert into students (student_id,given_name,family_name,sex,photo_url,date_of_birth,address,phone,email,date_of_join)
 values
 ("STUD20201","gn1","fn1","MALE","photo1","1997-12-03","address1","phone1","email1","2020-04-05"),
-("STUD20202","gn3","fn3","FEMALE","photo1","1989-03-21","address3","phone3","email3","2020-04-05"),
-("STUD20203","gn4","fn4","OTHER","photo1","1995-12-06","address4","phone4","email4","2020-10-12"),
-("STUD20204","gn6","fn6","MALE","photo1","1997-11-05","address7","phone6","email6","2020-12-21"),
+("STUD20202","gn3","fn3","FEMALE","photo3","1989-03-21","address3","phone3","email3","2020-04-05"),
+("STUD20203","gn4","fn4","OTHER","photo4","1995-12-06","address4","phone4","email4","2020-10-12"),
+("STUD20204","gn6","fn6","MALE","photo6","1997-11-05","address7","phone6","email6","2020-12-21"),
 ("STUD20205","gn9","fn9","OTHER","photo9","1999-04-11","address9","phone9","email9","2020-03-15"),
-("STUD20211","gn5","fn5","MALE","photo1","1993-08-03","address5","phone5","email5","2021-01-21"),
-("STUD20212","gn7","fn7","FEMALE","photo1","1990-10-03","address7","phone7","email7","2021-04-05"),
-("STUD20213","gn8","fn8","OTHER","photo1","1998-12-03","address8","phone8","email8","2021-04-05"),
-("STUD20214","gn2","fn2","FEMALE","photo1","1997-10-21","address2","phone2","email2","2021-05-03"),
+("STUD20211","gn5","fn5","MALE","photo5","1993-08-03","address5","phone5","email5","2021-01-21"),
+("STUD20212","gn7","fn7","FEMALE","photo7","1990-10-03","address7","phone7","email7","2021-04-05"),
+("STUD20213","gn8","fn8","OTHER","photo8","1998-12-03","address8","phone8","email8","2021-04-05"),
+("STUD20214","gn2","fn2","FEMALE","photo2","1997-10-21","address2","phone2","email2","2021-05-03"),
 ("STUD20215","gn10","fn10","FEMALE","photo10","1990-10-21","address10","phone10","email10","2021-03-01");
 
 insert into sequences (table_name,pattern,create_count) VALUES ("courses","C2020",3),("courses","C2021",4);

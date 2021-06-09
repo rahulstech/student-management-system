@@ -1,9 +1,13 @@
 package rahulstech.javafx.studentmanagementsystem.model;
 
+import rahulstech.javafx.studentmanagementsystem.util.EqualsContent;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Schedule {
+import static rahulstech.javafx.studentmanagementsystem.util.Helpers.isContentEqual;
+
+public class Schedule implements EqualsContent {
 
     private String scheduleId;
     private Course course;
@@ -68,8 +72,19 @@ public class Schedule {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Schedule)) return false;
-        Schedule that = (Schedule) o;
-        return Objects.equals(scheduleId, that.scheduleId);
+        Schedule schedule = (Schedule) o;
+        return Objects.equals(scheduleId, schedule.scheduleId);
+    }
+
+    public boolean equalsContent(Object o) {
+        if (null == o) return false;
+        if (!(o instanceof Schedule)) return false;
+        Schedule schedule = (Schedule) o;
+        return Objects.equals(scheduleId, schedule.scheduleId) &&
+                isContentEqual(course,schedule.course) &&
+                Objects.equals(start, schedule.start) &&
+                Objects.equals(end, schedule.end) &&
+                Objects.equals(description, schedule.description);
     }
 
     public Schedule clone() {

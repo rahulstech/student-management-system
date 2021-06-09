@@ -64,16 +64,16 @@ public class AdmissionDao  {
         String sql = "SELECT * FROM admissions WHERE course_id = ? AND due_payment > 0;";
         logger.debug("sql: "+sql+" | values: [courseId=\""+courseId+"\"]");
         Connection conn = db.getConnection();
-        Course course = new Course();
-        course.setCourseId(courseId);
+        Course course = db.getCourseDao().getCourseById(courseId,new String[]{"course_id","name","status"});
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1,courseId);
             ResultSet rs = ps.executeQuery();
             if (null != rs) {
                 List<Admission> admissions = new ArrayList<>();
                 while (rs.next()) {
-                    Student student = db.getStudentDao().getStudentByStudentId(
-                            rs.getString("student_id"),new String[]{"student_id","given_name","family_name",
+                    String studentId = rs.getString("student_id");
+                    Student student = db.getStudentDao().getStudentByStudentId(studentId,
+                            new String[]{"student_id","given_name","family_name",
                                     "address","email","phone"});
                     Admission admission = newAdmission(rs,student,course);
                     admissions.add(admission);
@@ -92,7 +92,9 @@ public class AdmissionDao  {
         String sql = "SELECT * FROM admissions WHERE student_id = ? AND status = \""+ENROLLED.getValue()+"\" AND due_payment > 0;";
         logger.debug("sql: "+sql+" | values: [studentId=\""+studentId+"\"]");
         Connection conn = db.getConnection();
-        Student student = new Student();
+        Student student = db.getStudentDao().getStudentByStudentId(studentId,
+                new String[]{"student_id","given_name","family_name",
+                        "address","email","phone"});;
         student.setStudentId(studentId);
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1,studentId);

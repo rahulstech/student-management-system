@@ -4,10 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import rahulstech.javafx.studentmanagementsystem.model.Admission;
-import rahulstech.javafx.studentmanagementsystem.model.AdmissionStatus;
-import rahulstech.javafx.studentmanagementsystem.model.Course;
-import rahulstech.javafx.studentmanagementsystem.model.Student;
+import rahulstech.javafx.studentmanagementsystem.model.*;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -15,6 +12,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static rahulstech.javafx.studentmanagementsystem.util.Helpers.isContentEqual;
 
 class AdmissionDaoTest extends BaseDBTest {
 
@@ -67,17 +65,34 @@ class AdmissionDaoTest extends BaseDBTest {
     @MethodSource
     void getPendingPaymentsForCourse(String testName, String courseId, List<Admission> expected) {
         List<Admission> actual = getDb().getAdmissionDao().getPendingPaymentsForCourse(courseId);
-        assertEquals(expected,actual,testName);
+        if (null != expected) {
+            assertNotNull(actual,testName+": null returned");
+            assertEquals(expected.size(),actual.size(),testName+": different size");
+            for (int i = 0; i < expected.size(); i++) {
+                Admission expectedItem = expected.get(i);
+                Admission actualItem = actual.get(i);
+                assertTrue(isContentEqual(expectedItem,actualItem),testName+": content not equal");
+            }
+        }
+        else {
+            assertNull(actual,testName+": not null returned");
+        }
     }
 
     private static Stream<Arguments> getPendingPaymentsForCourse() {
         return Stream.of(
                 Arguments.of("Course With Pending Payments","C20202",
                         Arrays.asList(
-                                newAdmission("A3","STUD20201","C20202",
+                                newAdmission("A3",
+                                        newStudent("STUD20201","gn1","fn1",
+                                                "address1","phone1","email1"),
+                                        newCourse("C20202",null,null),
                                         LocalDate.of(2020,12,1),AdmissionStatus.ENROLLED,
                                         160,20),
-                                newAdmission("A6","STUD20205","C20202",
+                                newAdmission("A6",
+                                        newStudent("STUD20205","gn9","fn9",
+                                                "address9","phone9","email9"),
+                                        newCourse("C20202",null,null),
                                         LocalDate.of(2020,12,10),AdmissionStatus.ENROLLED,
                                         160,60))),
                 Arguments.of("Course With No Pending Payments","C20201", Arrays.asList()),
@@ -89,16 +104,32 @@ class AdmissionDaoTest extends BaseDBTest {
     @MethodSource
     void getPendingPaymentsForStudent(String testName, String studentId, List<Admission> expected) {
         List<Admission> actual = getDb().getAdmissionDao().getPendingPaymentsForStudent(studentId);
-        assertEquals(expected,actual,testName);
+        if (null != expected) {
+            assertNotNull(actual,testName+": null returned");
+            assertEquals(expected.size(),actual.size(),testName+": different size");
+            for (int i = 0; i < expected.size(); i++) {
+                Admission expectedItem = expected.get(i);
+                Admission actualItem = actual.get(i);
+
+                assertTrue(isContentEqual(expectedItem,actualItem),testName+": content not equal");
+            }
+        }
+        else {
+            assertNull(actual,testName+": not null returned");
+        }
     }
 
     private static Stream<Arguments> getPendingPaymentsForStudent() {
         return Stream.of(
                 Arguments.of("Student With Pending Payments","STUD20201",
                         Arrays.asList(
-                                newAdmission("A3","STUD20201","C20202",
+                                newAdmission("A3",
+                                        newStudent("STUD20201",null,null,null,null,null),
+                                        newCourse("C20202","name 2","RUNNING"),
                                         LocalDate.of(2020,12,1),AdmissionStatus.ENROLLED,160,20),
-                                newAdmission("A18","STUD20201","C20213",
+                                newAdmission("A18",
+                                        newStudent("STUD20201",null,null,null,null,null),
+                                        newCourse("C20213","name 6","RUNNING"),
                                         LocalDate.of(2020,3,12),AdmissionStatus.ENROLLED,130,30)
                         )),
                 Arguments.of("Student With No Pending Payments","C20211",Arrays.asList()),
@@ -122,5 +153,39 @@ class AdmissionDaoTest extends BaseDBTest {
         admission.setNetPayable(net_payable);
         admission.setDuePayment(due_payment);
         return admission;
+    }
+
+    private static Admission newAdmission(String admission_id, Student student, Course course,
+                                          LocalDate admission_date, AdmissionStatus status,
+                                          float net_payable, float due_payment) {
+        Admission admission = new Admission();
+        admission.setAdmissionId(admission_id);
+        admission.setStudent(student);
+        admission.setCourse(course);
+        admission.setAdmissionDate(admission_date);
+        admission.setStatus(status);
+        admission.setNetPayable(net_payable);
+        admission.setDuePayment(due_payment);
+        return admission;
+    }
+
+    private static Course newCourse(String course_id, String name, String status) {
+        Course course = new Course();
+        course.setCourseId(course_id);
+        course.setName(name);
+        course.setStatus(null == status ? null : CourseStatus.from(status));
+        return course;
+    }
+
+    private static Student newStudent(String student_id, String given_name, String family_name,
+                                      String address, String phone, String email) {
+        Student student = new Student();
+        student.setStudentId(student_id);
+        student.setGivenName(given_name);
+        student.setFamilyName(family_name);
+        student.setAddress(address);
+        student.setPhone(phone);
+        student.setEmail(email);
+        return student;
     }
 }

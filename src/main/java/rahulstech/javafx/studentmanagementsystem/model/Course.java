@@ -1,9 +1,11 @@
 package rahulstech.javafx.studentmanagementsystem.model;
 
+import rahulstech.javafx.studentmanagementsystem.util.EqualsContent;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Course {
+public class Course implements EqualsContent {
 
     private String courseId;
     private String name;
@@ -110,6 +112,21 @@ public class Course {
         if (!(o instanceof Course)) return false;
         Course course = (Course) o;
         return Objects.equals(courseId, course.courseId);
+    }
+
+    public boolean equalsContent(Object o) {
+        if (null == o) return false;
+        if (!(o instanceof Course)) return false;
+        Course course = (Course) o;
+        return Objects.equals(courseId, course.courseId) &&
+                Objects.equals(name, course.name) &&
+                Objects.equals(description, course.description) &&
+                Objects.equals(fees, course.fees) &&
+                status == course.status &&
+                Objects.equals(courseStart, course.courseStart) &&
+                Objects.equals(courseEnd, course.courseEnd) &&
+                Objects.equals(totalSeats, course.totalSeats) &&
+                Objects.equals(availableSeats, course.availableSeats);
     }
 
     public Course clone() {

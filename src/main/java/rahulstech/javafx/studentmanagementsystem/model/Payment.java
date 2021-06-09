@@ -82,6 +82,16 @@ public class Payment {
         return Objects.equals(paymentId, payment.paymentId);
     }
 
+    public boolean equalsContent(Payment payment) {
+        if (null == payment) return false;
+        return Objects.equals(paymentId, payment.paymentId) &&
+                Objects.equals(admission, payment.admission) &&
+                Objects.equals(student, payment.student) &&
+                Objects.equals(course, payment.course) &&
+                Objects.equals(amount, payment.amount) &&
+                Objects.equals(when, payment.when);
+    }
+
     public Payment clone() {
         Payment copy = new Payment();
         copy.paymentId = this.paymentId;

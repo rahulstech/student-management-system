@@ -7,6 +7,19 @@ import java.util.regex.Pattern;
 
 public class Helpers {
 
+    public static String hash(String text) {
+        return new PasswordAuthentication().hash(text);
+    }
+
+    public static boolean checkHash(String check, String with) {
+        return new PasswordAuthentication().authenticate(check, with);
+    }
+
+    public static boolean isContentEqual(EqualsContent a, EqualsContent b) {
+        if (null == a) return null == b;
+        return a.equalsContent(b);
+    }
+
     public static boolean isEmptyString(String string) {
         return null == string || "".equals(string);
     }

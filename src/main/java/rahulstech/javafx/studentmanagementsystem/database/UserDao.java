@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
 
+import static rahulstech.javafx.studentmanagementsystem.util.Helpers.hash;
+
 public class UserDao {
 
     private static final Logger logger = LogManager.getLogger(UserDao.class);
@@ -24,7 +26,6 @@ public class UserDao {
     public User createUser(User user) {
         User copy = user.clone();
         copy.setUserId(generateNewUserId());
-        // TODO: hash password
         String sql = "INSERT INTO users (user_id,username,password,given_name,family_name,sex,photo_url,phone)"+
                 " VALUES (?,?,?,?,?,?,?,?);";
         logger.debug("sql: "+sql+" | values: ["+copy+"]");

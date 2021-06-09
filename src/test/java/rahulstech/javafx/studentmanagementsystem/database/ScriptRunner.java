@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 /**
  * Tool to run database scripts.
- * Copied from https://github.com/BenoitDuffez/ScriptRunner/blob/master/ScriptRunner.java
+ * @see <a href="https://github.com/BenoitDuffez/ScriptRunner/blob/master/ScriptRunner.java">GitHub</a>
  */
 public class ScriptRunner {
 
