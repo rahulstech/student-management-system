@@ -33,6 +33,23 @@ class ScheduleDaoTest extends BaseDBTest {
 
     @ParameterizedTest
     @MethodSource
+    void createSchedule_Exception(String testName, Schedule schedule, Class<Throwable> expected) {
+        assertThrows(expected,() -> getDb().getScheduleDao().createSchedule(schedule),testName);
+    }
+
+    private static Stream<Arguments> createSchedule_Exception() {
+        return Stream.of(
+                Arguments.of("Null Values For Non Null Fields",new Schedule(),DatabaseException.class),
+                Arguments.of("Non Existing Course Id",newSchedule(null,
+                        newCourse("xyz",null,null),
+                        LocalDateTime.of(2020,4,15,10,0,0),
+                        LocalDateTime.of(2020,4,15,11,0,0),
+                        "class 1"),DatabaseException.class)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource
     void checkOverlappingSchedule(String testName, LocalDateTime start, LocalDateTime end, boolean expected) {
         boolean actual = getDb().getScheduleDao().checkOverlappingSchedule(start, end);
         assertEquals(expected,actual,testName);
@@ -109,15 +126,6 @@ class ScheduleDaoTest extends BaseDBTest {
                                         newCourse("C20201","name 1","COMPLETE"),
                                         LocalDateTime.of(2020,4,15,10,0),
                                         LocalDateTime.of(2020,4,15,11,0,0),
-                                        "class 1"),
-                                newSchedule("S7",
-                                        newCourse("C20202","name 2","RUNNING"),
-                                        LocalDateTime.of(2021,4,15,11,30,0),
-                                        LocalDateTime.of(2021,4,15,12,30,0),
-                                        "class 4"),
-                                newSchedule("S10",newCourse("C20213","name 6","RUNNING"),
-                                        LocalDateTime.of(2021,4,15,8,30,0),
-                                        LocalDateTime.of(2021,4,15,10,30,0),
                                         "class 1"))
                         ),
                 Arguments.of("No Schedules On Date",

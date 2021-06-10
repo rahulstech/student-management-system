@@ -34,6 +34,6 @@ public enum CourseStatus {
     public String toString() {
         return "CourseStatus{" +
                 "value='" + value + '\'' +
-                "} " + super.toString();
+                "} ";
     }
 }

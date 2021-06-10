@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static rahulstech.javafx.studentmanagementsystem.util.Helpers.isContentEqual;
 
 class StudentDaoTest extends BaseDBTest {
 
@@ -27,9 +28,11 @@ class StudentDaoTest extends BaseDBTest {
         student.setEmail("rohan1990@gmail.com");
         student.setDateOfJoin(LocalDate.of(2021,1,10));
 
-        Student created = getDb().getStudentDao().addStudent(student);
-
-        assertEquals("STUD20214",created.getStudentId(),"invalid student id of new student");
+        assertDoesNotThrow(()->{
+            Student created = getDb().getStudentDao().addStudent(student);
+            String newStudentId = "STUD"+LocalDate.now().getYear()+"6";
+            assertEquals(newStudentId,created.getStudentId(),"unexpectd student id returned for created student");
+        },"create student exception thrown for correct values");
     }
 
     @ParameterizedTest
@@ -37,29 +40,19 @@ class StudentDaoTest extends BaseDBTest {
     void getStudentByStudentId(String testName, String studentId, Student expected) {
         Student actual = getDb().getStudentDao().getStudentByStudentId(studentId,null);
         if (null == actual) {
-            assertNull(expected,testName+": null returned");
+            assertNull(expected,testName+": non null returned");
         }
         else {
-            assertEquals(expected.getStudentId(),actual.getStudentId(),testName+": student id");
-            assertEquals(expected.getGivenName(),actual.getGivenName(),testName+": given name");
-            assertEquals(expected.getFamilyName(),actual.getFamilyName(),testName+": family name");
-            assertEquals(expected.getSex(),actual.getSex(),testName+": sex");
-            assertEquals(expected.getPhotoURL(),actual.getPhotoURL(),testName+": photo url");
-            assertEquals(expected.getDateOfBirth(),actual.getDateOfBirth(),testName+": date of birth");
-            assertEquals(expected.getAddress(),actual.getAddress(),testName+": address");
-            assertEquals(expected.getPhone(),actual.getPhone(),testName+": phone");
-            assertEquals(expected.getEmail(),actual.getEmail(),testName+": email");
-            assertEquals(expected.getDateOfJoin(),actual.getDateOfJoin(),testName+": date of join");
+            assertTrue(isContentEqual(expected,actual),"getStudentByStudentId content not equal");
         }
     }
 
     private static Stream<Arguments> getStudentByStudentId() {
         return Stream.of(
                 Arguments.of("Existing Student","STUD20213",
-                        createStudent("STUD20213","Roxy","Ghosh",Sex.OTHER,
-                                "photos/students/photo4.jpg",LocalDate.of(1994,2,27),
-                                "Khagra, Berhampore, Murshidabad","+91 959 329 0045","roxxxxxy1997@gmail.com",
-                                LocalDate.of(2021,1,10))),
+                        createStudent("STUD20213","gn8","fn8",Sex.OTHER,
+                                "photo8",LocalDate.of(1998,12,3),
+                                "address8","phone8","email8",LocalDate.of(2021,4,5))),
                 Arguments.of("Non-Existing Student","STUD1245",null)
         );
     }
@@ -80,20 +73,11 @@ class StudentDaoTest extends BaseDBTest {
     @MethodSource
     void getStudentByStudentId_LimitedColumns(String testName, String studentId, String[] columns, Student expected) {
         Student actual = getDb().getStudentDao().getStudentByStudentId(studentId,columns);
-        if (null == actual) {
-            assertNull(expected,testName+": null returned");
+        if (null == expected) {
+            assertNull(actual,testName+": not null returned");
         }
         else {
-            assertEquals(expected.getStudentId(),actual.getStudentId(),testName+": student id");
-            assertEquals(expected.getGivenName(),actual.getGivenName(),testName+": given name");
-            assertEquals(expected.getFamilyName(),actual.getFamilyName(),testName+": family name");
-            assertEquals(expected.getSex(),actual.getSex(),testName+": sex");
-            assertEquals(expected.getPhotoURL(),actual.getPhotoURL(),testName+": photo url");
-            assertEquals(expected.getDateOfBirth(),actual.getDateOfBirth(),testName+": date of birth");
-            assertEquals(expected.getAddress(),actual.getAddress(),testName+": address");
-            assertEquals(expected.getPhone(),actual.getPhone(),testName+": phone");
-            assertEquals(expected.getEmail(),actual.getEmail(),testName+": email");
-            assertEquals(expected.getDateOfJoin(),actual.getDateOfJoin(),testName+": date of join");
+            assertTrue(isContentEqual(expected,actual),testName+": content not quals");
         }
     }
 
@@ -101,16 +85,20 @@ class StudentDaoTest extends BaseDBTest {
         return Stream.of(
                 Arguments.of("O Length Columns List","STUD20213",
                         new String[0],
-                        createStudent("STUD20213","Roxy","Ghosh",Sex.OTHER,
-                                "photos/students/photo4.jpg",LocalDate.of(1994,2,27),
-                                "Khagra, Berhampore, Murshidabad","+91 959 329 0045","roxxxxxy1997@gmail.com",
-                                LocalDate.of(2021,1,10))),
+                        createStudent("STUD20213","gn8","fn8",Sex.OTHER,
+                                "photo8",LocalDate.of(1998,12,3),
+                                "address8","phone8","email8",LocalDate.of(2021,4,5))
+                ),
                 Arguments.of("A Set of Columns List","STUD20213",
                         new String[]{"student_id","given_name","family_name","date_of_birth","phone"},
-                        createStudent("STUD20213","Roxy","Ghosh",null,
-                        null,LocalDate.of(1994,2,27),
-                        null,"+91 959 329 0045",null,
-                        null))
+                        createStudent("STUD20213","gn8","fn8",null,
+                                null,LocalDate.of(1998,12,3),
+                                null,"phone8",null,null)
+                ),
+                Arguments.of("Non Existing Student Record","STUD20221",
+                        new String[]{"student_id","given_name","family_name","date_of_birth","phone"},
+                        null
+                )
         );
     }
 

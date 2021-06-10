@@ -65,18 +65,7 @@ class AdmissionDaoTest extends BaseDBTest {
     @MethodSource
     void getPendingPaymentsForCourse(String testName, String courseId, List<Admission> expected) {
         List<Admission> actual = getDb().getAdmissionDao().getPendingPaymentsForCourse(courseId);
-        if (null != expected) {
-            assertNotNull(actual,testName+": null returned");
-            assertEquals(expected.size(),actual.size(),testName+": different size");
-            for (int i = 0; i < expected.size(); i++) {
-                Admission expectedItem = expected.get(i);
-                Admission actualItem = actual.get(i);
-                assertTrue(isContentEqual(expectedItem,actualItem),testName+": content not equal");
-            }
-        }
-        else {
-            assertNull(actual,testName+": not null returned");
-        }
+        assertListOfAdmissionContentEquals(expected,actual,testName);
     }
 
     private static Stream<Arguments> getPendingPaymentsForCourse() {
@@ -86,13 +75,13 @@ class AdmissionDaoTest extends BaseDBTest {
                                 newAdmission("A3",
                                         newStudent("STUD20201","gn1","fn1",
                                                 "address1","phone1","email1"),
-                                        newCourse("C20202",null,null),
+                                        newCourse("C20202","name 2","RUNNING"),
                                         LocalDate.of(2020,12,1),AdmissionStatus.ENROLLED,
                                         160,20),
                                 newAdmission("A6",
                                         newStudent("STUD20205","gn9","fn9",
                                                 "address9","phone9","email9"),
-                                        newCourse("C20202",null,null),
+                                        newCourse("C20202","name 2","RUNNING"),
                                         LocalDate.of(2020,12,10),AdmissionStatus.ENROLLED,
                                         160,60))),
                 Arguments.of("Course With No Pending Payments","C20201", Arrays.asList()),
@@ -104,19 +93,7 @@ class AdmissionDaoTest extends BaseDBTest {
     @MethodSource
     void getPendingPaymentsForStudent(String testName, String studentId, List<Admission> expected) {
         List<Admission> actual = getDb().getAdmissionDao().getPendingPaymentsForStudent(studentId);
-        if (null != expected) {
-            assertNotNull(actual,testName+": null returned");
-            assertEquals(expected.size(),actual.size(),testName+": different size");
-            for (int i = 0; i < expected.size(); i++) {
-                Admission expectedItem = expected.get(i);
-                Admission actualItem = actual.get(i);
-
-                assertTrue(isContentEqual(expectedItem,actualItem),testName+": content not equal");
-            }
-        }
-        else {
-            assertNull(actual,testName+": not null returned");
-        }
+        assertListOfAdmissionContentEquals(expected,actual,testName);
     }
 
     private static Stream<Arguments> getPendingPaymentsForStudent() {
@@ -124,11 +101,11 @@ class AdmissionDaoTest extends BaseDBTest {
                 Arguments.of("Student With Pending Payments","STUD20201",
                         Arrays.asList(
                                 newAdmission("A3",
-                                        newStudent("STUD20201",null,null,null,null,null),
+                                        newStudent("STUD20201","gn1","fn1","address1","phone1","email1"),
                                         newCourse("C20202","name 2","RUNNING"),
                                         LocalDate.of(2020,12,1),AdmissionStatus.ENROLLED,160,20),
                                 newAdmission("A18",
-                                        newStudent("STUD20201",null,null,null,null,null),
+                                        newStudent("STUD20201","gn1","fn1","address1","phone1","email1"),
                                         newCourse("C20213","name 6","RUNNING"),
                                         LocalDate.of(2020,3,12),AdmissionStatus.ENROLLED,130,30)
                         )),
@@ -187,5 +164,14 @@ class AdmissionDaoTest extends BaseDBTest {
         student.setPhone(phone);
         student.setEmail(email);
         return student;
+    }
+
+    private static void assertListOfAdmissionContentEquals(List<Admission> expected, List<Admission> actual, String testName) {
+        assertEquals(expected.size(),actual.size(),testName+": different size");
+        for (int i = 0; i < expected.size(); i++) {
+            Admission expectedItem = expected.get(i);
+            Admission actualItem = actual.get(i);
+            assertTrue(isContentEqual(expectedItem,actualItem),testName+": content not equal");
+        }
     }
 }

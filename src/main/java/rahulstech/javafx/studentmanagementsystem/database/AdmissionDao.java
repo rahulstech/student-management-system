@@ -95,7 +95,6 @@ public class AdmissionDao  {
         Student student = db.getStudentDao().getStudentByStudentId(studentId,
                 new String[]{"student_id","given_name","family_name",
                         "address","email","phone"});;
-        student.setStudentId(studentId);
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1,studentId);
             ResultSet rs = ps.executeQuery();

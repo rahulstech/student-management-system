@@ -109,14 +109,13 @@ public class ScheduleDao {
     }
 
     public List<Schedule> getAllSchedulesForDate(LocalDate date) {
-        // TODO: existing schedules not fetched:getAllSchedulesForDate
         String sql = "SELECT schedules.* FROM schedules INNER JOIN courses ON schedules.course_id = courses.course_id" +
-                " WHERE courses.status != \""+COURSE_CANCEL.getValue()+"\" DATE(start) = ?;";
+                " WHERE courses.status != \""+COURSE_CANCEL.getValue()+"\" AND DATE(schedules.start) = ?;";
         logger.debug("sql: "+sql+" | values: [date="+date+"]");
         Connection conn = db.getConnection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setDate(1,Date.valueOf(date));
-            ResultSet rs = ps.getResultSet();
+            ResultSet rs = ps.executeQuery();
             if (null != rs) {
                 List<Schedule> schedules = new ArrayList<>();
                 while (rs.next()) {
@@ -136,7 +135,6 @@ public class ScheduleDao {
     }
 
     public List<Schedule> getStudentSchedulesForDate(String studentId, LocalDate date) {
-        // TODO: existing schedules not fetched:getStudentSchedulesForDate
         String sql = "SELECT schedules.* FROM schedules INNER JOIN admissions ON schedules.course_id = admissions.course_id " +
                 "INNER JOIN courses ON schedules.course_id = courses.course_id " +
                 "WHERE courses.status != \""+COURSE_CANCEL.getValue()+"\" AND admissions.student_id = ? AND DATE(schedules.start) = ?;";
@@ -145,7 +143,7 @@ public class ScheduleDao {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1,studentId);
             ps.setDate(2,Date.valueOf(date));
-            ResultSet rs = ps.getResultSet();
+            ResultSet rs = ps.executeQuery();
             if (null != rs) {
                 List<Schedule> schedules = new ArrayList<>();
                 while (rs.next()) {
